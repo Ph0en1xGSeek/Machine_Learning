@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="news">
+  <database-model serializer="dbm" rdbms="UNKNOWN" format-version="4.4">
+    <root id="1">
+      <DefaultCasing>exact/mixed</DefaultCasing>
+    </root>
+    <database id="2" parent="1">
+      <Visible>1</Visible>
+    </database>
+    <schema id="3" parent="2">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <table id="4" parent="3" name="news"/>
+    <column id="5" parent="4" name="index">
+      <DataType>INTEGER(2000000000,10)|4</DataType>
+    </column>
+    <column id="6" parent="4" name="article">
+      <Position>1</Position>
+      <DataType>TEXT(2000000000,10)|12</DataType>
+    </column>
+    <column id="7" parent="4" name="comments">
+      <Position>2</Position>
+      <DataType>INTEGER(2000000000,10)|4</DataType>
+    </column>
+    <column id="8" parent="4" name="dt">
+      <Position>3</Position>
+      <DataType>TIMESTAMP(2000000000,10)|12</DataType>
+    </column>
+    <column id="9" parent="4" name="editor">
+      <Position>4</Position>
+      <DataType>TEXT(2000000000,10)|12</DataType>
+    </column>
+    <column id="10" parent="4" name="source">
+      <Position>5</Position>
+      <DataType>TEXT(2000000000,10)|12</DataType>
+    </column>
+    <column id="11" parent="4" name="title">
+      <Position>6</Position>
+      <DataType>TEXT(2000000000,10)|12</DataType>
+    </column>
+    <index id="12" parent="4" name="ix_news_index">
+      <ColNames>index</ColNames>
+      <Unique>1</Unique>
+    </index>
+  </database-model>
+</dataSource>
