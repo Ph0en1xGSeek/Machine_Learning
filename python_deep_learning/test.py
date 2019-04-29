@@ -5,6 +5,7 @@ sys.path.append(os.pardir)  # 为了导入父目录的文件而进行的设定
 import numpy as np
 from dataset.mnist import load_mnist
 from mnist_dense import TwoLayerNet
+from optimizer import *
 
 # 读入数据
 (x_train, t_train), (x_test, t_test) = load_mnist(normalize=True, one_hot_label=True)
@@ -31,6 +32,7 @@ train_acc_list = []
 test_acc_list = []
 
 iter_per_epoch = max(train_size / batch_size, 1)
+optimizer = Adam()
 
 for i in range(iters_num):
     batch_mask = np.random.choice(train_size, batch_size)
@@ -39,8 +41,9 @@ for i in range(iters_num):
 
     grad = network.gradient(x_batch, t_batch)
 
-    for key in ('W1', 'b1', 'W2', 'b2'):
-        network.params[key] -= learning_rate * grad[key]
+    # for key in ('W1', 'b1', 'W2', 'b2'):
+    #     network.params[key] -= learning_rate * grad[key]
+    optimizer.update(network.params, grad)
     
     loss = network.loss(x_batch, t_batch)
     train_loss_list.append(loss)
@@ -50,4 +53,4 @@ for i in range(iters_num):
         test_acc = network.accuracy(x_test, t_test)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
-        print("{} {}".format(train_acc, test_acc))
+        print("train_acc: {:.5f} test_acc: {:.5f}".format(train_acc, test_acc))
