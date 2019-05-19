@@ -22,7 +22,7 @@ class Affine:
 
         return dx
 
-class Relu():
+class Relu:
     def __init__(self):
         self.mask = None
 
@@ -66,3 +66,20 @@ class SoftmaxWithLoss:
         batch_size = self.t.shape[0]
         dx = (self.y - self.t) / batch_size
         return dx
+
+class Dropout:
+
+    def __init__(self, dropout_ratio=0.5):
+        self.dropout_ratio = dropout_ratio
+        self.mask = None
+    
+    def forward(self, x, train_flg=True):
+        if train_flg:
+            self.mask = np.random.rand(*x.shape) > self.dropout_ratio
+            return x * self.mask
+        else:
+            return x * (1.0 - self.dropout_ratio)
+    
+    def backward(self, dout):
+        return dout * self.mask
+

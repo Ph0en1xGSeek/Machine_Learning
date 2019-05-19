@@ -12,6 +12,7 @@ class TwoLayerNet:
         self.params['b2'] = np.zeros(output_size)
 
         self.layers = OrderedDict()
+        self.layers['Dropout'] = Dropout(dropout_ratio=0.3)
         self.layers['Affine1'] = Affine(self.params['W1'], self.params['b1'])
         self.layers['Relu1'] = Relu()
 
