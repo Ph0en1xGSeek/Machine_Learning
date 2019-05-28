@@ -83,3 +83,37 @@ class Dropout:
     def backward(self, dout):
         return dout * self.mask
 
+class BatchNormalization:
+    def __init__(self, gamma, beta, momentum=0.9, 
+                running_mean=None, running_var=None):
+        self.gamma = gamma
+        self.beta = beta
+        self.momentum = momentum
+        self.input_shape = None
+
+        self.running_mean = running_mean
+        self.running_var = running_var
+        self.batch_size = None
+        self.xc = None
+        self.std = None
+        self.dgamma = None
+        self.dbeta = None
+    
+    def forward(self, x, train_flg=True):
+        self.input_shape = x.shape
+        if x.ndim != 2:
+            N, C, H, W = x.shape
+            x = x.reshape(N, -1)
+        
+        out = self.__forward(x, train_flg)
+        return out.reshape(*self.input_shape)
+
+    def __forward(self, x, train_flg):
+        if self.running_mean is None:
+            N, D = x.shape
+            self.running_mean = np.zeros(D)
+            self.running_var = np.zeros(D)
+        
+        if train_flg:
+            mu = 
+
