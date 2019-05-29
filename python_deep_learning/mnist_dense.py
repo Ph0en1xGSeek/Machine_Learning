@@ -8,12 +8,15 @@ class TwoLayerNet:
         self.params = {}
         self.params['W1'] = weight_init_std * np.random.randn(input_size, hidden_size)
         self.params['b1'] = np.zeros(hidden_size)
+        self.params['gamma'] = np.ones(hidden_size)
+        self.params['beta'] = np.zeros(hidden_size)
         self.params['W2'] = weight_init_std * np.random.randn(hidden_size, output_size)
         self.params['b2'] = np.zeros(output_size)
 
         self.layers = OrderedDict()
         self.layers['Dropout'] = Dropout(dropout_ratio=0.3)
         self.layers['Affine1'] = Affine(self.params['W1'], self.params['b1'])
+        self.layers['BatchNorm'] = BatchNormalization(self.params['gamma'], self.params['beta'])
         self.layers['Relu1'] = Relu()
 
         self.layers['Affine2'] = Affine(self.params['W2'], self.params['b2'])
@@ -64,6 +67,8 @@ class TwoLayerNet:
         grads = {}
         grads['W1'] = self.layers['Affine1'].dW
         grads['b1'] = self.layers['Affine1'].db
+        grads['gamma'] = self.layers['BatchNorm'].dgamma
+        grads['beta'] = self.layers['BatchNorm'].dbeta
         grads['W2'] = self.layers['Affine2'].dW
         grads['b2'] = self.layers['Affine2'].db
 
