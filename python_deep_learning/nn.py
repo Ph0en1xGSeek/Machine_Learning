@@ -219,6 +219,7 @@ class Pooling:
         out_w = int(1 + (W + 2 * self.pad - self.pool_w) / self.stride)
 
         col = im2col(x, self.pool_h, self.pool_w, self.stride, self.pad)
+        #(N * out_h * out_w, C * pool_h * pool_w) -> (N * out_h * out_w * C, pool_h * pool_w)
         col = col.reshape(-1, self.pool_h * self.pool_w)
 
         arg_max = np.argmax(col, axis=1)
