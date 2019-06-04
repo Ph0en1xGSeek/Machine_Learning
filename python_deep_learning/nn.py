@@ -177,11 +177,11 @@ class Convolution:
         # FN: number of channel of next layers
         FN, C, FH, FW = self.W.shape
         N, C, H, W = x.shape
-        out_h = 1 + int((H + 2 * self.pad - FN) / self.stride)
+        out_h = 1 + int((H + 2 * self.pad - FH) / self.stride)
         out_w = 1 + int((W + 2 * self.pad - FW) / self.stride)
 
         col = im2col(x, FH, FW, self.stride, self.pad)
-        col_W = self.W.reshpae(FN, -1).T
+        col_W = self.W.reshape(FN, -1).T
 
         out = np.dot(col, col_W) + self.b
         out = out.reshape(N, out_h, out_w, -1).transpose(0, 3, 1, 2)
@@ -189,6 +189,7 @@ class Convolution:
         self.x = x
         self.col = col
         self.col_W = col_W
+        return out
 
     def backward(self, dout):
         FN, C, FH, FW = self.W.shape
@@ -198,13 +199,13 @@ class Convolution:
         self.dW = np.dot(self.col.T, dout)
         self.dW = self.dW.T.reshape(FN, C, FH, FW)
 
-        dcol = np.dot(dout, self.col_W)
+        dcol = np.dot(dout, self.col_W.T)
         dx = col2im(dcol, self.x.shape, FH, FW, self.stride, self.pad)
 
         return dx
 
 class Pooling:
-    def __init__(self, pool_h, pool_w, stride=1, pad=0):
+    def __init__(self, pool_h, pool_w, stride=1, pad=0, flatten=False):
         self.pool_h = pool_h
         self.pool_w = pool_w
         self.stride = stride
@@ -212,6 +213,10 @@ class Pooling:
 
         self.x = None
         self.arg_max = None
+        self.flatten = flatten
+        self.out_h = None
+        self.out_w = None
+        self.C = None
 
     def forward(self, x):
         N, C, H, W = x.shape
@@ -225,13 +230,20 @@ class Pooling:
         arg_max = np.argmax(col, axis=1)
         out = np.max(col, axis=1)
         out = out.reshape(N, out_h, out_w, C).transpose(0, 3, 1, 2)
+        if self.flatten:
+            out = out.reshape(N, -1)
         
         self.x = x
         self.arg_max = arg_max
+        self.out_h = out_h
+        self.out_w = out_w
+        self.C = C
 
         return out
     
     def backward(self, dout):
+        if self.flatten:
+            dout = dout.reshape(dout.shape[0], self.C, self.out_h, self.out_w)
         dout = dout.transpose(0, 2, 3, 1)
 
         pool_size = self.pool_h * self.pool_w
