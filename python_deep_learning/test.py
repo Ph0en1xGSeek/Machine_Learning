@@ -32,7 +32,7 @@ train_acc_list = []
 test_acc_list = []
 
 iter_per_epoch = max(train_size / batch_size, 1)
-optimizer = Adam()
+optimizer = AdaGrad()
 
 for i in range(iters_num):
     batch_mask = np.random.choice(train_size, batch_size)
